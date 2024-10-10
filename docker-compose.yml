@@ -1,0 +1,19 @@
+services:
+  sesion-anonima:
+   # build: .
+    image: glndocker36/juego-anonimo:0.0.1
+    container_name: sesion-anonima-gln
+    ports:
+      - 8089:80
+    networks:
+      - anonima-net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@10.10.10.20:1521:xe
+      SPRING_DATASOURCE_USERNAME: coordinador
+      SPRING_DATASOURCE_PASSWORD: coordinador
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.driver.OracleDriver
+
+networks:
+  anonima-net:
+    driver: bridge
+    #external: false

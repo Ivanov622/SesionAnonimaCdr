@@ -1,0 +1,112 @@
+name: reusable workflow - execute unit tests, build image and push to docker hub
+
+on:
+  workflow_call:
+    inputs:
+      microservice:
+        required: true
+        type: string
+      microservice-path:
+        required: true
+        type: string
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+
+jobs:
+
+  # changes:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     src: ${{ steps.changes.outputs.src }}
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - uses: dorny/paths-filter@v3
+  #     id: changes
+  #     with:
+  #       filters: |
+  #         src:
+  #           - '${{ inputs.microservice-path }}/**'
+
+  unit-tests:
+    name: unit tests
+    # needs: changes
+    # if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      working-directory: ${{ inputs.microservice-path }} 
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Test with pytest
+      working-directory: ${{ inputs.microservice-path }} 
+      run: |
+        pip install pytest pytest-cov
+        pytest --cov=. -v -s --cov-fail-under=80
+
+  build-push:
+    name: build and push docker image to docker hub
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    needs: unit-tests
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # required for github-action-get-previous-tag
+        ref: 'develop'
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.microservice }}
+        # tags: |
+        #   type=semver,pattern={{version}}
+        #   #type=raw,value={{sha}}, enable=${{ github.ref_type != 'tag' }}
+
+    # - name: Semver
+    #   id: semver
+    #   uses: matt-usurp/validate-semver@v2
+    #   with:
+    #     version: ${{ github.ref }}
+
+    - name: Build and push Docker image
+      # if: steps.semantic.outputs.new_release_published == 'true'
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        #push: ${{ github.event_name != 'pull_request' }}
+        #push: ${{ github.event.base_ref =='refs/heads/develop' && github.ref_type == 'tag'}}
+        #push: ${{ github.event.base_ref =='refs/heads/main' && github.ref_type == 'tag' && !startsWith(github.ref, 'refs/tags/v0.')}}
+        #tags: ${{ steps.semver.outputs.version }}
+        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta.outputs.tags }}

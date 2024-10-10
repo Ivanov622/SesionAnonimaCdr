@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.10.10.20:1521:xe
+    username: hts
+    password: htsdba
+    driver-class-name: oracle.jdbc.OracleDriver
+  config:
+    import: optional:file:.env[.properties] 
+#  jpa:
+#    hibernate:
+#      ddl-auto: none
+#    show-sql: false
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    database: postgresql
+#    database-platform: org.hibernate.dialect.OracleDialect        
+#  application: 
+#    name: SesionAnonima
+server:
+  port: 8999

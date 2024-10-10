@@ -1,0 +1,18 @@
+# Ejemplo de github action para probar python
+# Docs: https://docs.github.com/es/actions/using-workflows/workflow-syntax-for-github-actions
+name: GLN-webhook-X18 CI/CD Main
+
+on:
+  pull_request:
+    branches: 
+      - main
+
+# check for run job based on file changes in GitHub Actions
+# https://how.wtf/run-workflow-step-or-job-based-on-file-changes-github-actions.html
+jobs:
+  webhook-x18:
+    uses: ./.github/workflows/test-build.yml
+    with:
+       microservice: webhook-x18
+       microservice-path: ./
+    secrets: inherit
