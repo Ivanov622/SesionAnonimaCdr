@@ -7,6 +7,8 @@ import com.codere.rest.record.SesionRecord;
 
 public interface ISesionService {
 	
-	List<SesionRecord> getSesionesByIdSala(Long numerocontrol, LocalDateTime fechaIn, LocalDateTime fechaFinal);
+	List<SesionRecord> getSesionesByIdSala(Long numerocontrol, LocalDateTime startTime, LocalDateTime finalTime);
+
+	Integer validarMaquina(Long maquina);
 
 }

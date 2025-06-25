@@ -15,9 +15,8 @@ public interface ISesionRepository extends JpaRepository<Sesion, Long> {
 	
 	@Query("""			
 			select new com.codere.rest.record.SesionRecord(s.venueCode, s.slotSerialNumber, s.vendorCode, s.gameCode, 
-			s.startTime, s.endTime, s.betAmount, s.paidAmount, s.gamesPlayed)
-			from Sesion s where s.slotSerialNumber =:numerocontrol and s.estado = 1 and s.startTime <=:fechaIn and s.endTime >=:fechaFinal	
+			s.startTime, s.endTime, s.deltaEntradas*s.valorCredito, (s.deltaSalidas+s.deltaJackpot)*s.valorCredito, s.gamesPlayed, s.promotional)
+			from Sesion s where s.slotSerialNumber =:numerocontrol and s.estado > 0 and s.startTime >=:startTime and s.endTime <=:finalTime	
 			""")
-	List<SesionRecord> getSesionesByIdSala(@Param("numerocontrol")Long numerocontrol, @Param("fechaIn")LocalDateTime fechaIn, @Param("fechaFinal")LocalDateTime fechaFinal);
-	
+		List<SesionRecord> getSesionesByIdSala(@Param("numerocontrol")Long numerocontrol, @Param("startTime")LocalDateTime startTime, @Param("finalTime")LocalDateTime finalTime);
 }

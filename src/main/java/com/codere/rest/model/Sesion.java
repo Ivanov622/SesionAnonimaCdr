@@ -76,10 +76,10 @@ public class Sesion {
 	private Integer estado;
 	
 	@Column(name = "deltaentradas")
-	private Double betAmount;
+	private Double deltaEntradas;
 	
 	@Column(name = "deltasalidas")
-	private Double paidAmount;
+	private Double deltaSalidas;
 	
 	@Column(name = "deltacajon")
 	private Double deltaCajon;
@@ -89,6 +89,9 @@ public class Sesion {
 	
 	@Column(name = "deltajugadas")
 	private Double gamesPlayed;
+	
+	@Column(name = "promocional")
+	private Double promotional;
 	
 	 
 
