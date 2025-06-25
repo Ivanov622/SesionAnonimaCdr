@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.codere</groupId>
 	<artifactId>SesionAnonima</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.9</version>
 	<name>SesionAnonima</name>
 	<description>Sesiones Anónimas Codere</description>
 	<url/>
@@ -63,7 +63,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--		Implementar seguridad
+		<dependency>
+     		<groupId>org.springframework.boot</groupId>
+      		<artifactId>spring-boot-starter-actuator</artifactId>
+    	</dependency>   	
+
+<!--		
+		<dependency>
+   			<groupId>org.hibernate.orm</groupId>
+    		<artifactId>hibernate-community-dialects</artifactId>
+		</dependency>
+		Implementar seguridad
 		<dependency>
 			 <groupId>org.springframework.boot</groupId>
 			 <artifactId>spring-boot-starter-security</artifactId>
